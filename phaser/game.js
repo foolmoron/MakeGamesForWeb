@@ -39,7 +39,7 @@ window.onload = function() {
             this.bottomPadding = 40;
 
             this.character = this.add.sprite(this.world.centerX, this.world.height - this.bottomPadding, 'character');
-            this.character.anchor.x = 11/40;
+            this.character.anchor.x = 11/49;
             this.character.anchor.y = 0.9;
             this.character.acceleration = {x: 0, y: 4000};
             this.character.velocity = {x: 0, y: 0};
