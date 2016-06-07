@@ -1,0 +1,14 @@
+{
+  "name": "phaserdemo",
+  "version": "1.0.0",
+  "description": "Tiny Phaser demo",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "phaser": "^2.4.8"
+  }
+}
