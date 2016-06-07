@@ -13,6 +13,7 @@ class HatComponent extends Component {
                 parent: entity,
                 texture: Luxe.resources.texture('assets/hat1.png'),
                 pos: new Vec(22, -20),
+                depth: 1,
             });
             case 1:
             new Sprite({
@@ -20,6 +21,7 @@ class HatComponent extends Component {
                 parent: entity,
                 texture: Luxe.resources.texture('assets/hat2.png'),
                 pos: new Vec(37, 10),
+                depth: 1,
             });
             case 2:
             new Sprite({
@@ -27,6 +29,7 @@ class HatComponent extends Component {
                 parent: entity,
                 texture: Luxe.resources.texture('assets/hat3.png'),
                 pos: new Vec(21, 8),
+                depth: 1,
             });
             case 3:
             new Sprite({
@@ -34,6 +37,7 @@ class HatComponent extends Component {
                 parent: entity,
                 texture: Luxe.resources.texture('assets/hat4.png'),
                 pos: new Vec(8, 4),
+                depth: 1,
             });
         }
     }
