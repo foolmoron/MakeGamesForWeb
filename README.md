@@ -8,9 +8,6 @@ A clicking game using DOM rendering
 ## /canvas2d
 The same clicking game using Canvas2D rendering
 
-## /webgl
-The same clicking game using WebGL rendering
-
 ## /phaser
 A simple 2D platformer demo game using [Phaser](http://phaser.io/)
 
