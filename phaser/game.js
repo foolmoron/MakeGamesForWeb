@@ -1,7 +1,6 @@
 window.onload = function() {
     window.game = new Phaser.Game(800, 600, Phaser.AUTO, '', null, false, true, null);
 
-    // start menu (hi, click to play)
     game.state.add('start', {
         preload: function() {
             this.load.image('bg', 'bg.png');
@@ -28,7 +27,6 @@ window.onload = function() {
         },
     });
 
-    // jumping character with WASD, click to shoot, destroy targets
     game.state.add('game', {
         create: function() {
             this.stage.backgroundColor = '#fff';
@@ -105,7 +103,6 @@ window.onload = function() {
         },
     });
 
-    // game over when all targets dead
     game.state.add('end', {
         create: function() {
             this.stage.backgroundColor = '#f95929';
