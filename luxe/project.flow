@@ -1,0 +1,33 @@
+{
+  luxe:{
+    window: {
+      width: 800,
+      height: 600,
+      title:'LuxeDemo',
+      fullscreen:false,
+      resizable:true,
+      borderless:false
+    }
+  },
+
+  project : {
+    name : 'LuxeDemo',
+    version : '0.0.1',
+    author : 'LuxeDemo',
+
+    app : {
+      name : 'luxe_empty',
+      package : 'com.foolmoron.LuxeDemo'
+    },
+
+    build : {
+      dependencies : {
+        luxe : '*',
+      }
+    },
+
+    files : {
+      assets : 'assets/'
+    }
+  }
+}

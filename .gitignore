@@ -1,3 +1,5 @@
 *.sublime-workspace
 *.sublime-project
 phaser/node_modules/
+luxe/node_modules/
+luxe/bin/
