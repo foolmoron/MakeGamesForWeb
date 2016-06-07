@@ -8,6 +8,10 @@ window.onload = function() {
             this.load.image('target', 'target.png');
             this.load.image('gameoverbar', 'gameoverbar.png');
             this.load.image('endgrid', 'endgrid.png');
+            this.load.image('hat1', 'hat1.png');
+            this.load.image('hat2', 'hat2.png');
+            this.load.image('hat3', 'hat3.png');
+            this.load.image('hat4', 'hat4.png');
         },
         create: function() {
             this.stage.backgroundColor = '#828dbd';
@@ -39,6 +43,21 @@ window.onload = function() {
             this.character.anchor.y = 0.9;
             this.character.acceleration = {x: 0, y: 4000};
             this.character.velocity = {x: 0, y: 0};
+
+            switch (Math.floor(Math.random() * 4)) {
+                case 0:
+                    this.character.addChild(this.make.sprite(-30, -120, 'hat1'));
+                    break;
+                case 1:
+                    this.character.addChild(this.make.sprite(-18, -90, 'hat2'));
+                    break;
+                case 2:
+                    this.character.addChild(this.make.sprite(-29, -92, 'hat3'));
+                    break;
+                case 3:
+                    this.character.addChild(this.make.sprite(-35, -99, 'hat4'));
+                    break;
+            }
 
             this.target = this.add.sprite(0, 0, 'target');
             this.randomizeTarget();
@@ -73,7 +92,7 @@ window.onload = function() {
             this.jumpWasDown = this.input.keyboard.isDown(Phaser.KeyCode.W);
 
             if (jumpWasPressed) {
-                this.character.velocity.y = -600;
+                this.character.velocity.y = -650;
             }
 
             this.character.velocity.x += this.character.acceleration.x * this.time.elapsed/1000;
