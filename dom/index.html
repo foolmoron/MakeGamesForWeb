@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM Game Rendering Demo</title>
+    <style type="text/css">
+        .big-centered {
+            width: 100%;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        #total-score {
+            font-weight: bold;
+        }
+        #target {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('target.png');
+            background-size: cover;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div class="big-centered">Score: <span id="total-score">0</span></div>
+<div id="target"></div>
+</body>
+
+<script type="text/javascript">
+// grab references
+var totalScore = document.getElementById('total-score');
+var target = document.getElementById('target');
+
+// state
+var score = 0;
+var roundStartTime = 0;
+
+// randomly place square and reset timers
+var newRound = () => {
+    target.style.left = (Math.random() * 90) + '%';
+    target.style.top = (Math.random() * 90) + '%';
+    roundStartTime = new Date().getTime();
+};
+
+// click handling
+target.addEventListener('click', e => {
+    var timeSinceRoundStart = new Date().getTime() - roundStartTime;
+    score += Math.floor(Math.max(1000 - timeSinceRoundStart, 1));
+    totalScore.innerHTML = score;
+    newRound();
+})
+
+// game over timer
+setTimeout(() => {
+    target.remove();
+    document.body.style.background = '#CCCCCC';
+}, 15*1000);
+
+// start round
+newRound();
+</script>
+</html>
