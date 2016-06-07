@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas2D Game Rendering Demo</title>
+    <style type="text/css">
+        html {
+            height: 100%;
+        }
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<canvas></canvas>
+</body>
+
+<script type="text/javascript">
+// setup canvas
+var canvas = document.getElementsByTagName('canvas')[0];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var ctx = canvas.getContext('2d');
+
+// load image
+var targetImage = new Image();
+targetImage.src = 'target.png';
+
+// state
+var score = 0;
+var roundStartTime = 0;
+var targetX;
+var targetY;
+
+// drawing
+var drawScore = () => {
+    ctx.fillStyle = 'black';
+    ctx.font = '28px serif';
+    ctx.fillText('Score:', canvas.width * 0.5 - 55, 30);
+    ctx.font = 'bold 28px serif';
+    ctx.fillText(score, canvas.width * 0.5 + 25, 30);
+}
+var clearWithScore = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawScore();    
+}
+
+// randomly place square and reset timers
+var newRound = () => {
+    clearWithScore();
+
+    targetX = (Math.random() * canvas.width * 0.9);
+    targetY = (Math.random() * canvas.height * 0.9);
+    ctx.drawImage(targetImage, targetX - targetImage.width/2, targetY - targetImage.height/2);
+
+    roundStartTime = new Date().getTime();
+};
+
+// click handling
+canvas.addEventListener('click', e => {
+    if (targetX != null && targetY != null) {
+        var vectorToMouse = [e.clientX - targetX, e.clientY - targetY];
+        var distToMouse = Math.sqrt(vectorToMouse[0]*vectorToMouse[0] + vectorToMouse[1]*vectorToMouse[1]);
+        if (distToMouse <= (targetImage.width / 2)) {
+            var timeSinceRoundStart = new Date().getTime() - roundStartTime;
+            score += Math.floor(Math.max(1000 - timeSinceRoundStart, 1));
+            newRound();            
+        }
+    }
+});
+
+// game over timer
+setTimeout(() => {
+    ctx.fillStyle = '#CCCCCC';
+    ctx.fillRect(0, 0, canvas.width, canvas.width);
+    drawScore();
+    targetX = targetY = null;
+}, 10*1000);
+
+// start round after load
+targetImage.onload = () => newRound();
+</script>
+</html>

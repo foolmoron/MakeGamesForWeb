@@ -50,13 +50,13 @@ target.addEventListener('click', e => {
     score += Math.floor(Math.max(1000 - timeSinceRoundStart, 1));
     totalScore.innerHTML = score;
     newRound();
-})
+});
 
 // game over timer
 setTimeout(() => {
     target.remove();
     document.body.style.background = '#CCCCCC';
-}, 15*1000);
+}, 10*1000);
 
 // start round
 newRound();
