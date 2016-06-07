@@ -67,6 +67,8 @@ class GameState extends State {
         wasdControl.jumpForce = 250;
         character.add(wasdControl);
 
+        character.add(new HatComponent({ name: 'hat' }));
+
         target = new Sprite({
             texture: Luxe.resources.texture('assets/target.png'),
         });
