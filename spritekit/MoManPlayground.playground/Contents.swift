@@ -12,8 +12,12 @@ struct Constants {
 	
 	static let scoreFontName = "AppleSDGothicNeo-Regular"
 	
+	static let scoreAnimationTime: NSTimeInterval = 1.0
+	static let scoreAnimationHeight: CGFloat = 32.0
+	
 	static let scorePosition = CGPoint(x: Constants.gameWindow.width / 2.0, y: Constants.gameWindow.height - 32)
 }
+
 
 struct Helpers {
 	static func randomizePosition(inFrame frame: CGRect, withMargins margins: UIEdgeInsets) -> CGPoint {
@@ -37,6 +41,7 @@ struct Helpers {
 
 class GameScene: SKScene {
 	
+	//MARK:- Properties
 	let target = SKSpriteNode(imageNamed: Constants.targetName)
 	let player = SKSpriteNode(imageNamed: Constants.playerName)
 	
@@ -50,6 +55,7 @@ class GameScene: SKScene {
 	var currentRoundTime: CFTimeInterval = 0 // the amount of time the target has been onscreen since hit
 	var lastUpdateTime: CFTimeInterval = 0
 	
+	//MARK:- Init
 	override init(size: CGSize) {
 		super.init(size: size)
 		setup()
@@ -59,6 +65,7 @@ class GameScene: SKScene {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	//MARK: Setup
 	func setup() {
 		setupBackground()
 		setupLabels()
@@ -91,6 +98,7 @@ class GameScene: SKScene {
 		randomizeTargetPosition()
 	}
 	
+	//MARK:- Gameplay
 	func randomizeTargetPosition() {
 		target.position = Helpers.randomizePosition(inFrame: Constants.gameWindow, withMargins: Constants.margins)
 	}
@@ -121,10 +129,11 @@ class GameScene: SKScene {
 		newScoreLabel.position = target.position
 		newScoreLabel.text = "+\(score)"
 		
-		let rise = SKAction.moveBy(CGVector(dx: 0, dy: 32), duration: 0.5)
-		let fadeOut = SKAction.fadeOutWithDuration(1.0)
-		let sequence = SKAction.sequence([rise, fadeOut])
-		newScoreLabel.runAction(sequence)
+		let rise = SKAction.moveBy(CGVector(dx: 0, dy: Constants.scoreAnimationHeight), duration: Constants.scoreAnimationTime)
+		let fadeOut = SKAction.fadeOutWithDuration(Constants.scoreAnimationTime)
+		let group = SKAction.group([rise, fadeOut])
+		group.timingMode = .EaseOut
+		newScoreLabel.runAction(group)
 		
 	}
 	
@@ -135,6 +144,7 @@ class GameScene: SKScene {
 		lastUpdateTime = currentTime
 	}
 	
+	//MARK: Input
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		for touch in touches {
 			if target.frame.contains(touch.locationInNode(self)) {
@@ -144,9 +154,11 @@ class GameScene: SKScene {
 	}
 }
 
-//:- Main
+//MARK:- Main
 var scene = GameScene(size: Constants.gameWindow.size)
 let view = SKView(frame: Constants.gameWindow)
 view.presentScene(scene)
 
-XCPlaygroundPage.currentPage.liveView = view
+/* uncomment below to run */
+
+//XCPlaygroundPage.currentPage.liveView = view
