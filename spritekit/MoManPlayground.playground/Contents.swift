@@ -7,8 +7,9 @@ struct Constants {
 	static let gameWindow = CGRect(x: 0, y: 0, width: 800, height: 600)
 	static let margins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
 	static let targetName = "target"
-	static let playerName = "player"
+	static let playerName = "character"
 	static let backgroundName = "bg"
+	static let playerSpeed: CGFloat = 15
 	
 	static let scoreFontName = "AppleSDGothicNeo-Regular"
 	
@@ -16,8 +17,13 @@ struct Constants {
 	static let scoreAnimationHeight: CGFloat = 32.0
 	
 	static let scorePosition = CGPoint(x: Constants.gameWindow.width / 2.0, y: Constants.gameWindow.height - 32)
+	
+	static let playerSpawn = CGPoint(x: Constants.gameWindow.width / 2.0 , y: Constants.margins.bottom)
 }
 
+extension Selector {
+	static let handlePan = #selector(GameScene.handle(_:))
+}
 
 struct Helpers {
 	static func randomizePosition(inFrame frame: CGRect, withMargins margins: UIEdgeInsets) -> CGPoint {
@@ -55,6 +61,8 @@ class GameScene: SKScene {
 	var currentRoundTime: CFTimeInterval = 0 // the amount of time the target has been onscreen since hit
 	var lastUpdateTime: CFTimeInterval = 0
 	
+	var panVelocity = CGPoint.zero
+	
 	//MARK:- Init
 	override init(size: CGSize) {
 		super.init(size: size)
@@ -65,11 +73,25 @@ class GameScene: SKScene {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	override func didMoveToView(view: SKView) {
+		setupGestures()
+		startNewRound()
+	}
+	
 	//MARK: Setup
 	func setup() {
 		setupBackground()
 		setupLabels()
 		setupTarget()
+		setupPlayer()
+	}
+	
+	func setupGestures() {
+		guard let view = view else {
+			fatalError()
+		}
+		let panRecognizer = UIPanGestureRecognizer(target: self, action: Selector.handlePan)
+		view.addGestureRecognizer(panRecognizer)
 	}
 	
 	func setupBackground() {
@@ -95,7 +117,12 @@ class GameScene: SKScene {
 	
 	func setupTarget() {
 		addChild(target)
-		randomizeTargetPosition()
+	}
+	
+	func setupPlayer() {
+		addChild(player)
+		player.anchorPoint = CGPoint(x: 0.5, y: 0)
+		player.position = Constants.playerSpawn
 	}
 	
 	//MARK:- Gameplay
@@ -118,7 +145,6 @@ class GameScene: SKScene {
 		
 		totalScore += score
 		totalScoreLabel.text = "SCORE: \(totalScore)"
-		
 		runScoreAction(withScore: score)
 	}
 	
@@ -142,6 +168,13 @@ class GameScene: SKScene {
 		
 		currentRoundTime += deltaTime
 		lastUpdateTime = currentTime
+		
+		if panVelocity.x != 0 {
+			let relativeMove = panVelocity.x / Constants.gameWindow.width * Constants.playerSpeed
+			
+			player.position = CGPoint(x: max(min(player.position.x + relativeMove, Constants.gameWindow.width), 0), y: player.position.y)
+		}
+	
 	}
 	
 	//MARK: Input
@@ -150,6 +183,18 @@ class GameScene: SKScene {
 			if target.frame.contains(touch.locationInNode(self)) {
 				targetWasHit()
 			}
+		}
+	}
+	
+	func handle(pan: UIPanGestureRecognizer) {
+		if pan.state == UIGestureRecognizerState.Changed {
+			let translation = pan.velocityInView(self.view)
+			panVelocity = CGPoint(x: translation.x, y: 0)
+			
+			// resets so that translation doesn't accum
+			pan.setTranslation(CGPointZero, inView: self.view)
+		} else {
+			panVelocity = CGPoint.zero
 		}
 	}
 }
@@ -161,4 +206,4 @@ view.presentScene(scene)
 
 /* uncomment below to run */
 
-//XCPlaygroundPage.currentPage.liveView = view
+XCPlaygroundPage.currentPage.liveView = view
