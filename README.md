@@ -14,5 +14,5 @@ A simple 2D platformer demo game using [Phaser](http://phaser.io/)
 ## /luxe
 The same demo game using [Luxe](http://luxeengine.com/)
 
-## /luxe
-The same demo game using [Unity](http://unity3d.com/)
+## /Unity
+A quick random demo using [Unity](http://unity3d.com/)
