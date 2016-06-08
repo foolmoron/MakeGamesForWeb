@@ -4,3 +4,4 @@ phaser/node_modules/
 luxe/node_modules/
 luxe/bin/
 unity/Library/
+*.suo
