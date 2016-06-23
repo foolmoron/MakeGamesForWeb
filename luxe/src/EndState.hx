@@ -24,6 +24,7 @@ class EndState extends State {
 
         endGrid = new Sprite({
             texture: Luxe.resources.texture('assets/endgrid.png'),
+            scale: new Vec(1.25, 1.25),
             pos: Luxe.screen.mid,
         });
         Main.scene.add(endGrid);
