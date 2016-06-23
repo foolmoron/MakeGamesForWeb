@@ -3,7 +3,7 @@ import luxe.Sprite;
 import luxe.Color;
 import luxe.States;
 import luxe.Scene;
-import luxe.Core;
+import luxe.Engine;
 import luxe.Ev;
 import luxe.Log.*;
 import luxe.IO;
@@ -17,7 +17,7 @@ class Main extends luxe.Game {
     public static var scene: Scene;
     public static var state: States;
 
-    override function config(config:luxe.AppConfig) {
+    override function config(config:luxe.GameConfig) {
         config.preload.textures.push({ id:'assets/bg.png' });
         config.preload.textures.push({ id:'assets/character.png' });
         config.preload.textures.push({ id:'assets/target.png' });
