@@ -5,3 +5,6 @@ luxe/node_modules/
 luxe/bin/
 unity/Library/
 *.suo
+spritekit/MoManPlayground.playground/playground.xcworkspace/contents.xcworkspacedata
+spritekit/MoManPlayground.playground/playground.xcworkspace/xcuserdata/andrewbowers.xcuserdatad/UserInterfaceState.xcuserstate
+spritekit/MoManPlayground.playground/timeline.xctimeline
