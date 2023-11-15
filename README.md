@@ -1,2 +1,2 @@
-# MakeGamesForWeb
-A set of projects and examples for my talk: Making Games With Your Web Skills!
+# Make Games Using Your Web Skills
+A set of projects and examples for my talk: Making Games With Your Web Skills! https://docs.google.com/presentation/d/1cG0tYudPkluIJy1a11dnDw8t91kijz3BOmvEY0aL5O0/edit#slide=id.p
