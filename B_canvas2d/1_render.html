@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make Games Using Your Web Skills! - DOM Game Demo</title>
+    <title>Make Games Using Your Web Skills! - Canvas2D Game Demo</title>
     <style>
         html {
             margin: 0;
@@ -15,27 +15,6 @@
         body {
             margin: 0;
             width: 100%;
-        }
-
-        .game {
-            position: relative;
-            background: url("../resources/background.png");
-            background-repeat: repeat;
-            width: 1920px;
-            height: 1080px;
-        }
-
-        .game > label {
-            position: absolute;
-            top: 35%;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 20rem;
-            display: none;
-        }
-        .game.gameover > label {
-            display: unset;
         }
 
         .ui {
@@ -53,40 +32,23 @@
             border-bottom-left-radius: 48px;
         }
 
-        .player {
+        .game {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .game > label {
             position: absolute;
-
-            width: 300px;
-            height: 300px;
-            translate: -50% -50%;
-
-            background: url("../resources/player1.png");
-            background-position: center;
+            top: 35%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 20rem;
+            display: none;
         }
-        .player.moving {
-            animation: walk 0.2s linear 0s infinite forwards;
-        }
-        .player.left {
-            scale: -1 1;
-        }
-        @keyframes walk {
-            0%, 49.99% {
-                background-image: url("../resources/player2.png");
-            }
-            50%, 99.99% {
-                background-image: url("../resources/player3.png");
-            }
-        }
-
-        .treasure {
-            position: absolute;
-
-            width: 150px;
-            height: 150px;
-            translate: -50% -50%;
-
-            background: url("../resources/treasure.png");
-            background-position: center;
+        .game.gameover > label {
+            display: unset;
         }
     </style>
 </head>
@@ -96,7 +58,7 @@
         <label>Treasure collected: <span id="points">0</span></label>
     </div>
     <div class="game">
-        <div class="player"></div>
+        <canvas width="1920" height="1080"></canvas>
         <label>GAME OVER</label>
     </div>
     <audio id="collect" src="../resources/collect.wav"></audio>
@@ -105,15 +67,41 @@
 
     <script>
         const PLAYER_SPEED = 600;
+        const PLAYER_ANIM_TIME_PER_INDEX = 0.1;
         const TREASURE_COLLECT_RADIUS = 100;
 
         const game = document.querySelector('.game');
-        const player = document.querySelector('.player');
         const uiSecsLeft = document.querySelector('#secs-left');
         const uiPoints = document.querySelector('#points');
         const audioCollect = document.querySelector('#collect');
 
+        const player = {
+            x: 0,
+            y: 0,
+            moving: false,
+            left: false,
+            animTime: 0,
+            animIndex: 0,
+        };
         const direction = { x: 0, y: 0 };
+        const treasures = []; // { x: number, y: number }[]
+
+        // Canvas and resources
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const imgBackground = new Image();
+        imgBackground.src = '../resources/background.png';
+        const imgPlayer1 = new Image();
+        imgPlayer1.src = '../resources/player1.png';
+        const imgTreasure = new Image();
+        imgTreasure.src = '../resources/treasure.png';
+
+        const imgPlayer2 = new Image();
+        imgPlayer2.src = '../resources/player2.png';
+        const imgPlayer3 = new Image();
+        imgPlayer3.src = '../resources/player3.png';
+        const animPlayerWalk = [imgPlayer2, imgPlayer3];
 
         // Directional input handling
         addEventListener('keydown', evt => {
@@ -142,28 +130,23 @@
             }
 
             // Player movement based on speed and direction
-            const playerX = parseInt(player.style.left || 0) + direction.x * PLAYER_SPEED * dt;
-            const playerY = parseInt(player.style.top || 0) + direction.y * PLAYER_SPEED * dt;
-            player.style.left = playerX + 'px';
-            player.style.top = playerY + 'px';
+            player.x += direction.x * PLAYER_SPEED * dt;
+            player.y += direction.y * PLAYER_SPEED * dt;
 
             // Animation states
-            player.classList.toggle('moving', direction.x != 0 || direction.y != 0)
+            player.moving = direction.x != 0 || direction.y != 0
             if (direction.x == -1) {
-                player.classList.add('left')
+                player.left = true;
             } else if (direction.x == 1) {
-                player.classList.remove('left')
+                player.left = false;
             }
 
-            // Collect treasure
-            for (const treasure of game.querySelectorAll('.treasure')) {
-                const treasurePosition = {
-                    x: parseInt(treasure.style.left),
-                    y: parseInt(treasure.style.top)
-                };
+            // Collect treasure, reverse iterate due to element deletion
+            for (let i = treasures.length - 1; i >= 0; i--) {
+                const treasure = treasures[i];
                 const playerToTreasure = {
-                    x: treasurePosition.x - playerX,
-                    y: treasurePosition.y - playerY,
+                    x: treasure.x - player.x,
+                    y: treasure.y - player.y,
                 }
                 // Vector distance calculation to see if we're close enough
                 const distance = Math.sqrt(
@@ -172,7 +155,7 @@
                 )
                 if (distance <= TREASURE_COLLECT_RADIUS) {
                     // Delete treasure obj
-                    treasure.remove();
+                    treasures.splice(i, 1);
 
                     // Play sound
                     audioCollect.currentTime = 0;
@@ -182,6 +165,37 @@
                     const points = parseInt(uiPoints.textContent) + 1;
                     uiPoints.textContent = points;
                 }
+            }
+
+            // Render background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(imgBackground, 0, 0);
+
+            // Render player
+            let imgPlayer = imgPlayer1;
+            if (player.moving) {
+                player.animTime += dt;
+                if (player.animTime >= PLAYER_ANIM_TIME_PER_INDEX) {
+                    player.animTime -= PLAYER_ANIM_TIME_PER_INDEX;
+                    player.animIndex = (player.animIndex + 1) % animPlayerWalk.length;
+                }
+                imgPlayer = animPlayerWalk[player.animIndex];
+            } else {
+                player.animTime = 0;
+                player.animIndex = 0;
+            }
+            ctx.save();
+            ctx.translate(player.x - imgPlayer.width / 2, player.y - imgPlayer.height / 2);
+            if (player.left) {
+                ctx.translate(imgPlayer.width, 0);
+                ctx.scale(-1, 1);
+            }
+            ctx.drawImage(imgPlayer, 0, 0);
+            ctx.restore();
+
+            // Render treasures
+            for (const treasure of treasures) {
+                ctx.drawImage(imgTreasure, treasure.x - imgTreasure.width / 2, treasure.y - imgTreasure.height / 2);
             }
         }
         update();
@@ -193,7 +207,7 @@
             }
             const x = Math.random() * 1920;
             const y = Math.random() * 1080;
-            game.insertAdjacentHTML('beforeend', `<div class="treasure" style="left: ${x}px; top: ${y}px;"></div>`);
+            treasures.push({ x, y });
             setTimeout(spawnTreasure, 900 + Math.random() * 300);
         }
         spawnTreasure();
