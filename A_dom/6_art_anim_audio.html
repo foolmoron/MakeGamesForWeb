@@ -19,7 +19,7 @@
 
         .game {
             position: relative;
-            background: url("../resources/background.png");
+            background: url("../C_pixi/public/background.png");
             background-repeat: repeat;
             width: 1920px;
             height: 1080px;
@@ -60,7 +60,7 @@
             height: 300px;
             translate: -50% -50%;
 
-            background: url("../resources/player1.png");
+            background: url("../C_pixi/public/player1.png");
             background-position: center;
         }
         .player.moving {
@@ -71,10 +71,10 @@
         }
         @keyframes walk {
             0%, 49.99% {
-                background-image: url("../resources/player2.png");
+                background-image: url("../C_pixi/public/player2.png");
             }
             50%, 99.99% {
-                background-image: url("../resources/player3.png");
+                background-image: url("../C_pixi/public/player3.png");
             }
         }
 
@@ -85,7 +85,7 @@
             height: 150px;
             translate: -50% -50%;
 
-            background: url("../resources/treasure.png");
+            background: url("../C_pixi/public/treasure.png");
             background-position: center;
         }
     </style>
@@ -99,7 +99,7 @@
         <div class="player"></div>
         <label>GAME OVER</label>
     </div>
-    <audio id="collect" src="../resources/collect.wav"></audio>
+    <audio id="collect" src="../C_pixi/public/collect.wav"></audio>
 
     <!-- -->
 

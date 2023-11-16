@@ -61,7 +61,7 @@
         <canvas width="1920" height="1080"></canvas>
         <label>GAME OVER</label>
     </div>
-    <audio id="collect" src="../resources/collect.wav"></audio>
+    <audio id="collect" src="../C_pixi/public/collect.wav"></audio>
 
     <!-- -->
 
@@ -110,16 +110,16 @@
         const ctx = canvas.getContext('2d');
 
         const imgBackground = new Image();
-        imgBackground.src = '../resources/background.png';
+        imgBackground.src = '../C_pixi/public/background.png';
         const imgPlayer1 = new Image();
-        imgPlayer1.src = '../resources/player1.png';
+        imgPlayer1.src = '../C_pixi/public/player1.png';
         const imgTreasure = new Image();
-        imgTreasure.src = '../resources/treasure.png';
+        imgTreasure.src = '../C_pixi/public/treasure.png';
 
         const imgPlayer2 = new Image();
-        imgPlayer2.src = '../resources/player2.png';
+        imgPlayer2.src = '../C_pixi/public/player2.png';
         const imgPlayer3 = new Image();
-        imgPlayer3.src = '../resources/player3.png';
+        imgPlayer3.src = '../C_pixi/public/player3.png';
         const animPlayerWalk = [imgPlayer2, imgPlayer3];
 
         // Directional input handling
