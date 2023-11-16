@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Games Using Your Web Skills! - DOM Game Demo</title>
+    <style>
+        html {
+            margin: 0;
+            width: 100%;
+            font-size: 16px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+        }
+
+        .game {
+            position: relative;
+            background: gainsboro;
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .game > label {
+            position: absolute;
+            top: 35%;
+            width: 100%;
+            text-align: center;
+            font-size: 20rem;
+            display: none;
+        }
+        .game.gameover > label {
+            display: unset;
+        }
+
+        .ui {
+            position: absolute;
+            top: 0;
+            right: 0;
+            text-align: right;
+            display: flex;
+            padding: 1rem;
+            flex-direction: column;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .player {
+            position: absolute;
+
+            width: 150px;
+            height: 250px;
+            translate: -50% -50%;
+
+            background: blue;
+        }
+
+        .treasure {
+            position: absolute;
+
+            width: 100px;
+            height: 100px;
+            translate: -50% -50%;
+
+            background: gold;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui">
+        <label>Seconds remaining: <span id="secs-left">11</span></label>
+        <label>Treasure collected: <span id="points">0</span></label>
+    </div>
+    <div class="game">
+        <div class="player"></div>
+        <label>GAME OVER</label>
+    </div>
+
+    <!-- -->
+
+    <script>
+        const PLAYER_SPEED = 600;
+        const TREASURE_COLLECT_RADIUS = 100;
+
+        const game = document.querySelector('.game')
+        const player = document.querySelector('.player')
+        const uiSecsLeft = document.querySelector('#secs-left')
+        const uiPoints = document.querySelector('#points')
+
+        const direction = { x: 0, y: 0 }
+
+        // Directional input handling
+        addEventListener('keydown', evt => {
+            if (evt.key == 'w') direction.y = -1;
+            if (evt.key == 's') direction.y = 1;
+            if (evt.key == 'a') direction.x = -1;
+            if (evt.key == 'd') direction.x = 1;
+        })
+        addEventListener('keyup', evt => {
+            if (evt.key == 'w' && direction.y === -1) direction.y = 0;
+            if (evt.key == 's' && direction.y === 1)  direction.y = 0;
+            if (evt.key == 'a' && direction.x === -1) direction.x = 0;
+            if (evt.key == 'd' && direction.x === 1)  direction.x = 0;
+        })
+
+        // Per-frame update loop, with deltaTime
+        let prevTime = Date.now();
+        function update() {
+            const newTime = Date.now();
+            const dt = (newTime - prevTime) / 1000;
+            prevTime = newTime;
+            requestAnimationFrame(update);
+
+            if (game.classList.contains('gameover')) {
+                return;
+            }
+
+            // Player movement based on speed and direction
+            const playerX = parseInt(player.style.left || 0) + direction.x * PLAYER_SPEED * dt;
+            const playerY = parseInt(player.style.top || 0) + direction.y * PLAYER_SPEED * dt;
+            player.style.left = playerX + 'px';
+            player.style.top = playerY + 'px';
+
+            // Collect treasure
+            for (const treasure of game.querySelectorAll('.treasure')) {
+                const treasurePosition = {
+                    x: parseInt(treasure.style.left),
+                    y: parseInt(treasure.style.top)
+                };
+                const playerToTreasure = {
+                    x: treasurePosition.x - playerX,
+                    y: treasurePosition.y - playerY,
+                }
+                // Vector distance calculation to see if we're close enough
+                const distance = Math.sqrt(
+                    playerToTreasure.x * playerToTreasure.x +
+                    playerToTreasure.y * playerToTreasure.y
+                )
+                if (distance <= TREASURE_COLLECT_RADIUS) {
+                    // Delete treasure obj
+                    treasure.remove();
+
+                    // Increase points
+                    const points = parseInt(uiPoints.textContent) + 1;
+                    uiPoints.textContent = points;
+                }
+            }
+        }
+        update();
+
+        // Treasure spawning every X milliseconds, at random location
+        function spawnTreasure() {
+            if (game.classList.contains('gameover')) {
+                return;
+            }
+            const x = Math.random() * 1920;
+            const y = Math.random() * 1080;
+            game.insertAdjacentHTML('beforeend', `<div class="treasure" style="left: ${x}px; top: ${y}px;"></div>`);
+            setTimeout(spawnTreasure, 900 + Math.random() * 300);
+        }
+        spawnTreasure();
+
+        // Count down timer every 1 second, game over when 0
+        function countDown() {
+            const secsLeft = parseInt(uiSecsLeft.textContent) - 1;
+            uiSecsLeft.textContent = secsLeft;
+            if (secsLeft <= 0) {
+                game.classList.add('gameover');
+            } else {
+                setTimeout(countDown, 1000);
+            }
+        }
+        countDown();
+    </script>
+</body>
+</html>

@@ -105,13 +105,13 @@
 
         const game = document.querySelector('.game')
         const player = document.querySelector('.player')
-        const treasure = document.querySelector('.treasure')
         const uiSecsLeft = document.querySelector('#secs-left')
         const uiPoints = document.querySelector('#points')
         const audioCollect = document.querySelector('#collect')
 
         const direction = { x: 0, y: 0 }
 
+        // Directional input handling
         addEventListener('keydown', evt => {
             if (evt.key == 'w') direction.y = -1;
             if (evt.key == 's') direction.y = 1;
@@ -125,10 +125,11 @@
             if (evt.key == 'd' && direction.x === 1)  direction.x = 0;
         })
 
+        // Per-frame update loop, with deltaTime
         let prevTime = Date.now();
         function update() {
             const newTime = Date.now();
-            const deltaTime = (newTime - prevTime) / 1000;
+            const dt = (newTime - prevTime) / 1000;
             prevTime = newTime;
             requestAnimationFrame(update);
 
@@ -136,8 +137,9 @@
                 return;
             }
 
-            const playerX = parseInt(player.style.left || 0) + direction.x * PLAYER_SPEED * deltaTime;
-            const playerY = parseInt(player.style.top || 0) + direction.y * PLAYER_SPEED * deltaTime;
+            // Player movement based on speed and direction
+            const playerX = parseInt(player.style.left || 0) + direction.x * PLAYER_SPEED * dt;
+            const playerY = parseInt(player.style.top || 0) + direction.y * PLAYER_SPEED * dt;
             player.style.left = playerX + 'px';
             player.style.top = playerY + 'px';
 
@@ -160,7 +162,10 @@
                     y: treasurePosition.y - playerY,
                 }
                 // Vector distance calculation to see if we're close enough
-                const distance = Math.sqrt(playerToTreasure.x*playerToTreasure.x + playerToTreasure.y*playerToTreasure.y)
+                const distance = Math.sqrt(
+                    playerToTreasure.x * playerToTreasure.x +
+                    playerToTreasure.y * playerToTreasure.y
+                )
                 if (distance <= TREASURE_COLLECT_RADIUS) {
                     // Delete treasure obj
                     treasure.remove();
@@ -177,6 +182,7 @@
         }
         update();
 
+        // Treasure spawning every X milliseconds, at random location
         function spawnTreasure() {
             if (game.classList.contains('gameover')) {
                 return;
@@ -188,6 +194,7 @@
         }
         spawnTreasure();
 
+        // Count down timer every 1 second, game over when 0
         function countDown() {
             const secsLeft = parseInt(uiSecsLeft.textContent) - 1;
             uiSecsLeft.textContent = secsLeft;

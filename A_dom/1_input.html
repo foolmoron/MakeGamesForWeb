@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Games Using Your Web Skills! - DOM Game Demo</title>
+    <style>
+        html {
+            margin: 0;
+            width: 100%;
+            font-size: 16px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+        }
+
+        .game {
+            position: relative;
+            background: gainsboro;
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .player {
+            position: absolute;
+
+            width: 150px;
+            height: 250px;
+            translate: -50% -50%;
+
+            background: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <div class="player"></div>
+    </div>
+
+    <!-- -->
+
+    <script>
+        const PLAYER_SPEED = 200;
+        const player = document.querySelector('.player')
+
+        // Directional input handling
+        addEventListener('keydown', evt => {
+            if (evt.key == 'w') player.style.top  = (parseInt(player.style.top  || 0) - PLAYER_SPEED) + 'px';
+            if (evt.key == 's') player.style.top  = (parseInt(player.style.top  || 0) + PLAYER_SPEED) + 'px';
+            if (evt.key == 'a') player.style.left = (parseInt(player.style.left || 0) - PLAYER_SPEED) + 'px';
+            if (evt.key == 'd') player.style.left = (parseInt(player.style.left || 0) + PLAYER_SPEED) + 'px';
+        })
+    </script>
+</body>
+</html>
