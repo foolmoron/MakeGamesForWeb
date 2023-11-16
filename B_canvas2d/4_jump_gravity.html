@@ -54,7 +54,7 @@
 </head>
 <body>
     <div class="ui">
-        <label>Seconds remaining: <span id="secs-left">111</span></label>
+        <label>Seconds remaining: <span id="secs-left">11</span></label>
         <label>Treasure collected: <span id="points">0</span></label>
     </div>
     <div class="game">
@@ -70,7 +70,7 @@
         const GRAVITY = 5000;
         const JUMP_FORCE = 1400;
         const PLAYER_ANIM_TIME_PER_INDEX = 0.1;
-        const TREASURE_COLLECT_RADIUS = 100;
+        const TREASURE_COLLECT_RADIUS = 150;
 
         const game = document.querySelector('.game');
         const uiSecsLeft = document.querySelector('#secs-left');
@@ -125,13 +125,13 @@
         // Directional input handling
         addEventListener('keydown', evt => {
             if (evt.repeat) return;
-            if (evt.key == 'w') player.velocityY = Math.min(player.velocityY, -JUMP_FORCE);
-            if (evt.key == 'a') direction.x = -1;
-            if (evt.key == 'd') direction.x = 1;
+            if (evt.key === 'w') player.velocityY = Math.min(player.velocityY, -JUMP_FORCE);
+            if (evt.key === 'a') direction.x = -1;
+            if (evt.key === 'd') direction.x = 1;
         })
         addEventListener('keyup', evt => {
-            if (evt.key == 'a' && direction.x === -1) direction.x = 0;
-            if (evt.key == 'd' && direction.x === 1)  direction.x = 0;
+            if (evt.key === 'a' && direction.x === -1) direction.x = 0;
+            if (evt.key === 'd' && direction.x === 1)  direction.x = 0;
         })
 
         // Box vs Box collision, checks all 4 corners
@@ -165,7 +165,7 @@
 
             // Check collision before moving, each axis separately for smooth movement
             let moved = false;
-            if (direction.x != 0 && !colliders.find(c => boxBoxCollision(c, { ...player, x: newX }))) {
+            if (direction.x !== 0 && !colliders.find(c => boxBoxCollision(c, { ...player, x: newX }))) {
                 player.x = newX;
                 moved = true;
             }
@@ -177,9 +177,9 @@
 
             // Animation states
             player.moving = moved
-            if (direction.x == -1) {
+            if (direction.x === -1) {
                 player.left = true;
-            } else if (direction.x == 1) {
+            } else if (direction.x === 1) {
                 player.left = false;
             }
 

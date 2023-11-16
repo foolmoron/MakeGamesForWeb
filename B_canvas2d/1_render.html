@@ -68,7 +68,7 @@
     <script>
         const PLAYER_SPEED = 600;
         const PLAYER_ANIM_TIME_PER_INDEX = 0.1;
-        const TREASURE_COLLECT_RADIUS = 100;
+        const TREASURE_COLLECT_RADIUS = 150;
 
         const game = document.querySelector('.game');
         const uiSecsLeft = document.querySelector('#secs-left');
@@ -105,16 +105,16 @@
 
         // Directional input handling
         addEventListener('keydown', evt => {
-            if (evt.key == 'w') direction.y = -1;
-            if (evt.key == 's') direction.y = 1;
-            if (evt.key == 'a') direction.x = -1;
-            if (evt.key == 'd') direction.x = 1;
+            if (evt.key === 'w') direction.y = -1;
+            if (evt.key === 's') direction.y = 1;
+            if (evt.key === 'a') direction.x = -1;
+            if (evt.key === 'd') direction.x = 1;
         })
         addEventListener('keyup', evt => {
-            if (evt.key == 'w' && direction.y === -1) direction.y = 0;
-            if (evt.key == 's' && direction.y === 1)  direction.y = 0;
-            if (evt.key == 'a' && direction.x === -1) direction.x = 0;
-            if (evt.key == 'd' && direction.x === 1)  direction.x = 0;
+            if (evt.key === 'w' && direction.y === -1) direction.y = 0;
+            if (evt.key === 's' && direction.y === 1)  direction.y = 0;
+            if (evt.key === 'a' && direction.x === -1) direction.x = 0;
+            if (evt.key === 'd' && direction.x === 1)  direction.x = 0;
         })
 
         // Per-frame update loop, with deltaTime
@@ -134,10 +134,10 @@
             player.y += direction.y * PLAYER_SPEED * dt;
 
             // Animation states
-            player.moving = direction.x != 0 || direction.y != 0
-            if (direction.x == -1) {
+            player.moving = direction.x !== 0 || direction.y !== 0
+            if (direction.x === -1) {
                 player.left = true;
-            } else if (direction.x == 1) {
+            } else if (direction.x === 1) {
                 player.left = false;
             }
 

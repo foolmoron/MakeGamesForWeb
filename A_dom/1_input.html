@@ -48,10 +48,10 @@
 
         // Directional input handling
         addEventListener('keydown', evt => {
-            if (evt.key == 'w') player.style.top  = (parseInt(player.style.top  || 0) - PLAYER_SPEED) + 'px';
-            if (evt.key == 's') player.style.top  = (parseInt(player.style.top  || 0) + PLAYER_SPEED) + 'px';
-            if (evt.key == 'a') player.style.left = (parseInt(player.style.left || 0) - PLAYER_SPEED) + 'px';
-            if (evt.key == 'd') player.style.left = (parseInt(player.style.left || 0) + PLAYER_SPEED) + 'px';
+            if (evt.key === 'w') player.style.top  = (parseInt(player.style.top  || 0) - PLAYER_SPEED) + 'px';
+            if (evt.key === 's') player.style.top  = (parseInt(player.style.top  || 0) + PLAYER_SPEED) + 'px';
+            if (evt.key === 'a') player.style.left = (parseInt(player.style.left || 0) - PLAYER_SPEED) + 'px';
+            if (evt.key === 'd') player.style.left = (parseInt(player.style.left || 0) + PLAYER_SPEED) + 'px';
         })
     </script>
 </body>
