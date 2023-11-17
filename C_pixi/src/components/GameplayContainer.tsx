@@ -54,7 +54,7 @@ export const GameplayContainer = ({ onGetPoint } : Props) => {
     const offsetClampedX = Math.max(Math.min(playerPosition.x - 1920 / 2, maxOffsetX), 0)
 
     return (
-        <Container width={2560} height={1080} x={-offsetClampedX}>
+        <Container x={-offsetClampedX}>
             <Sprite image='background.png' />
             <Player
                 position={playerPosition}

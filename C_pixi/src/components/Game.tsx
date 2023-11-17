@@ -24,9 +24,13 @@ export const Game = () => {
     // Game over
     useEffect(() => {
         if (secsLeft <= 0) {
+            // Save best score
+            localStorage.setItem('best', Math.max(points, parseInt(localStorage.getItem('best') ?? '0')).toString());
+
+            // Go to game over screen
             setScreen(Screen.Over)
         }
-    }, [secsLeft])
+    }, [points, secsLeft])
 
     // Count down timer every 1 second, game over when 0
     useEffect(() => {
@@ -79,6 +83,7 @@ export const Game = () => {
             }}>
                 <label>Seconds remaining: {secsLeft}</label>
                 <label>Treasure collected: {points}</label>
+                {screen === Screen.Over && <label>Best collected: {parseInt(localStorage.getItem('best') ?? '0')}</label>}
             </div>
             <Stage width={1920} height={1080} options={{ backgroundAlpha: 0 }}>
                 { containerToUse }
