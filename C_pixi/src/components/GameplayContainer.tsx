@@ -4,9 +4,11 @@ import { Treasure } from './Treasure';
 import { Rect, Vector2 } from '../util/interfaces';
 import { useCallback, useEffect, useState } from 'react';
 
-export const GameplayContainer = () => {
-    const [secsLeft, setSecsLeft] = useState(11);
-    const [gameover, setGameover] = useState(false);
+interface Props {
+    onGetPoint: () => void,
+}
+
+export const GameplayContainer = ({ onGetPoint } : Props) => {
     const [treasures, setTreasures] = useState<Vector2[]>([]);
     const [colliders, setColliders] = useState<Rect[]>([
         // walls
@@ -20,15 +22,16 @@ export const GameplayContainer = () => {
         { x: 1470, y: 1010, w: 100, h: 280 },
         { x: 1600, y: 840, w: 220, h: 580 },
     ]);
+    const [playerPosition, setPlayerPosition] = useState<Vector2>({
+        x: 1920 / 2,
+        y: 1080 / 2,
+    });
 
     // Treasure spawning every X milliseconds, at random location
     useEffect(() => {
-        if (gameover) {
-            return;
-        }
         let id = 0;
         function spawnTreasure() {
-            const x = Math.random() * 1920;
+            const x = Math.random() * 2560;
             const y = Math.random() * 1080;
             setTreasures(prev => [...prev, { x, y }]);
             id = window.setTimeout(spawnTreasure, 900 + Math.random() * 300);
@@ -37,44 +40,25 @@ export const GameplayContainer = () => {
         return () => {
             clearTimeout(id);
         }
-    }, [gameover])
-
-    // Count down timer every 1 second, game over when 0
-    useEffect(() => {
-        if (gameover) {
-            return;
-        }
-        let id = 0;
-        function countDown() {
-            setSecsLeft(prev => prev - 1);
-            id = window.setTimeout(countDown, 1000);
-        }
-        countDown();
-        return () => {
-            clearTimeout(id);
-        }
-    }, [gameover]);
-
-    // Game over
-    useEffect(() => {
-        if (secsLeft <= 0) {
-            setGameover(true)
-        }
-    }, [secsLeft])
+    }, [])
 
     const onTreasureCollected = useCallback((treasureIndex: number) => {
-        console.log("DELETE", treasureIndex, treasures[treasureIndex])
         setTreasures(prev => {
             prev.splice(treasureIndex, 1);
             return [...prev];
         })
-    }, [treasures]);
+        onGetPoint();
+    }, [onGetPoint]);
 
-    console.log(treasures.length);
+    const maxOffsetX = 2560 - 1920;
+    const offsetClampedX = Math.max(Math.min(playerPosition.x - 1920 / 2, maxOffsetX), 0)
+
     return (
-        <Container width={1920} height={1080}>
+        <Container width={2560} height={1080} x={-offsetClampedX}>
             <Sprite image='background.png' />
             <Player
+                position={playerPosition}
+                setPosition={setPlayerPosition}
                 colliders={colliders}
                 treasures={treasures}
                 onTreasureCollected={onTreasureCollected}

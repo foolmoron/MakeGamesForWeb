@@ -1,4 +1,4 @@
-import { Container, Sprite, useTick } from '@pixi/react';
+import { Container, Graphics, Sprite, useTick } from '@pixi/react';
 import { TreasureCollector } from './TreasureCollector';
 import { useEffect, useRef, useState } from 'react';
 import { Rect, Vector2 } from '../util/interfaces';
@@ -8,23 +8,24 @@ const PLAYER_SPEED = 800;
 const GRAVITY = 5000;
 const JUMP_FORCE = 1400;
 const PLAYER_ANIM_TIME_PER_INDEX = 0.1;
-const TREASURE_COLLECT_RADIUS = 150;
+const TREASURE_COLLECT_RADIUS = 110;
+const ANIM_PLAYER_WALK = ['player2.png', 'player3.png']
 
 interface Props {
+    position: Vector2,
+    setPosition: React.Dispatch<React.SetStateAction<Vector2>>,
     colliders: Rect[];
     treasures: Vector2[];
     onTreasureCollected: (treasureIndex: number) => void;
 }
 
 export const Player = ({
+    position,
+    setPosition,
     colliders,
     treasures,
     onTreasureCollected,
 }: Props) => {
-    const [position, setPosition] = useState<Vector2>({
-        x: 1920 / 2,
-        y: 1080 / 2,
-    });
     const [size, setSize] = useState<Vector2>({ x: 60, y: 190 });
     const direction = useRef<Vector2>({ x: 0, y: 0 });
     const [moving, setMoving] = useState(false);
@@ -33,25 +34,27 @@ export const Player = ({
     const animTime = useRef(0);
     const velocityY = useRef(0);
 
-
     // Directional input handling
     useEffect(() => {
         const onKeydown = (evt: KeyboardEvent) => {
             if (evt.repeat) return;
-            if (evt.key === 'w') velocityY.current = Math.min(velocityY.current, -JUMP_FORCE);
+            if (evt.key === 'w')
+                velocityY.current = Math.min(velocityY.current, -JUMP_FORCE);
             if (evt.key === 'a') direction.current.x = -1;
             if (evt.key === 'd') direction.current.x = 1;
         };
         const onKeyup = (evt: KeyboardEvent) => {
-            if (evt.key === 'a' && direction.current.x === -1) direction.current.x = 0;
-            if (evt.key === 'd' && direction.current.x === 1)  direction.current.x = 0;
+            if (evt.key === 'a' && direction.current.x === -1)
+                direction.current.x = 0;
+            if (evt.key === 'd' && direction.current.x === 1)
+                direction.current.x = 0;
         };
-        window.addEventListener('keydown', onKeydown)
-        window.addEventListener('keyup', onKeyup)
+        window.addEventListener('keydown', onKeydown);
+        window.addEventListener('keyup', onKeyup);
         return () => {
-            window.removeEventListener('keydown', onKeydown)
-            window.removeEventListener('keyup', onKeyup)
-        }
+            window.removeEventListener('keydown', onKeydown);
+            window.removeEventListener('keyup', onKeyup);
+        };
     }, []);
 
     useTick((deltaMultiplier) => {
@@ -77,7 +80,7 @@ export const Player = ({
                 })
             )
         ) {
-            setPosition(prev => ({ x: newX, y: prev.y }));
+            setPosition((prev) => ({ x: newX, y: prev.y }));
             moved = true;
         }
         if (
@@ -90,7 +93,7 @@ export const Player = ({
                 })
             )
         ) {
-            setPosition(prev => ({ x: prev.x, y: newY }));
+            setPosition((prev) => ({ x: prev.x, y: newY }));
         } else {
             velocityY.current = 0;
         }
@@ -102,17 +105,28 @@ export const Player = ({
         } else if (direction.current.x === 1) {
             setLeft(false);
         }
+
+        // Animate player
+        animTime.current += dt;
+        if (animTime.current >= PLAYER_ANIM_TIME_PER_INDEX) {
+            animTime.current -= PLAYER_ANIM_TIME_PER_INDEX;
+            setAnimIndex(prev => (prev + 1) % ANIM_PLAYER_WALK.length);
+        }
     });
 
+    const imgPlayer = moving
+        ? ANIM_PLAYER_WALK[animIndex]
+        : 'player1.png';
+
     return (
-        <Container x={position.x} y={position.y}>
-            <Sprite image='player1.png' anchor={0.5} />
+        <>
+            <Sprite image={imgPlayer} anchor={0.5} x={position.x} y={position.y} scale={{ x: left ? -1 : 1, y:1 }} />
             <TreasureCollector
                 position={position}
                 radius={TREASURE_COLLECT_RADIUS}
                 treasures={treasures}
                 onTreasureCollected={onTreasureCollected}
             />
-        </Container>
+        </>
     );
 };

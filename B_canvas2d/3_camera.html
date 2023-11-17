@@ -68,7 +68,7 @@
     <script>
         const PLAYER_SPEED = 800;
         const PLAYER_ANIM_TIME_PER_INDEX = 0.1;
-        const TREASURE_COLLECT_RADIUS = 150;
+        const TREASURE_COLLECT_RADIUS = 110;
 
         const game = document.querySelector('.game');
         const uiSecsLeft = document.querySelector('#secs-left');
@@ -251,7 +251,7 @@
             if (game.classList.contains('gameover')) {
                 return;
             }
-            const x = Math.random() * 1920;
+            const x = Math.random() * 2560;
             const y = Math.random() * 1080;
             treasures.push({ x, y });
             setTimeout(spawnTreasure, 900 + Math.random() * 300);

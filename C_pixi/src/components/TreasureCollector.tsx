@@ -1,6 +1,7 @@
 import { Container, Sprite, useTick } from '@pixi/react';
 import { Vector2 } from '../util/interfaces';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
+import { sound } from '@pixi/sound';
 
 interface Props {
     position: Vector2;
@@ -15,7 +16,11 @@ export const TreasureCollector = ({
     treasures,
     onTreasureCollected,
 }: Props) => {
-    const audioCollect = useRef<HTMLAudioElement>(null);
+    // Load sound
+    const playAudioCollect = useMemo(() => {
+        sound.add('collect', 'collect.wav');
+        return () => sound.play('collect');
+    }, [])
 
     useTick((deltaMultiplier) => {
         const dt = (1 / 60) * deltaMultiplier;
@@ -34,10 +39,7 @@ export const TreasureCollector = ({
             );
             if (distance <= radius) {
                 // Play sound
-                if (audioCollect.current) {
-                    audioCollect.current.currentTime = 0;
-                    audioCollect.current.play();
-                }
+                playAudioCollect();
 
                 // Signal collected
                 onTreasureCollected(i);
@@ -46,8 +48,7 @@ export const TreasureCollector = ({
     });
 
     return (
-        <Container>
-            {/* <audio ref={audioCollect} src='collect.wav' /> */}
-        </Container>
+        <>
+        </>
     );
 };
