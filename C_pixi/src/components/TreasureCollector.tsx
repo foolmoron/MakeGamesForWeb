@@ -1,7 +1,9 @@
-import { Container, Sprite, useTick } from '@pixi/react';
+import { useTick } from '@pixi/react';
 import { Vector2 } from '../util/interfaces';
-import { useMemo, useRef } from 'react';
 import { sound } from '@pixi/sound';
+
+// Load sound globally
+sound.add('collect', 'collect.wav');
 
 interface Props {
     position: Vector2;
@@ -16,12 +18,6 @@ export const TreasureCollector = ({
     treasures,
     onTreasureCollected,
 }: Props) => {
-    // Load sound
-    const playAudioCollect = useMemo(() => {
-        sound.add('collect', 'collect.wav');
-        return () => sound.play('collect');
-    }, [])
-
     useTick((deltaMultiplier) => {
         const dt = (1 / 60) * deltaMultiplier;
 
@@ -39,7 +35,7 @@ export const TreasureCollector = ({
             );
             if (distance <= radius) {
                 // Play sound
-                playAudioCollect();
+                sound.play('collect');
 
                 // Signal collected
                 onTreasureCollected(i);

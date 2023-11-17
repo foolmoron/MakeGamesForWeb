@@ -3,6 +3,7 @@ import { Player } from './Player';
 import { Treasure } from './Treasure';
 import { Rect, Vector2 } from '../util/interfaces';
 import { useCallback, useEffect, useState } from 'react';
+import { Arrow } from './Arrow';
 
 interface Props {
     onGetPoint: () => void,
@@ -10,6 +11,7 @@ interface Props {
 
 export const GameplayContainer = ({ onGetPoint } : Props) => {
     const [treasures, setTreasures] = useState<Vector2[]>([]);
+    const [arrows, setArrows] = useState<{rotation: number}[]>([]);
     const [colliders, setColliders] = useState<Rect[]>([
         // walls
         { x: -200, y: 1110, w: 3000, h: 200 },
@@ -42,6 +44,7 @@ export const GameplayContainer = ({ onGetPoint } : Props) => {
         }
     }, [])
 
+    // Handle collecting treasure and granting points
     const onTreasureCollected = useCallback((treasureIndex: number) => {
         setTreasures(prev => {
             prev.splice(treasureIndex, 1);
@@ -50,11 +53,23 @@ export const GameplayContainer = ({ onGetPoint } : Props) => {
         onGetPoint();
     }, [onGetPoint]);
 
+    // Offset container to player position for camera-panning
     const maxOffsetX = 2560 - 1920;
     const offsetClampedX = Math.max(Math.min(playerPosition.x - 1920 / 2, maxOffsetX), 0)
 
+    // Shoot arrow on click from player towards direction of mouse
+    const onClick = useCallback((evt: any) => {
+        const x = evt.x + offsetClampedX;
+        const y = evt.y;
+        const playerToClick = { x: x - playerPosition.x, y: y - playerPosition.y };
+        const rotation = Math.atan2(playerToClick.y, playerToClick.x);
+        setArrows(prev => [...prev, {
+            rotation: rotation,
+        }])
+    }, [offsetClampedX, playerPosition.x, playerPosition.y]);
+
     return (
-        <Container x={-offsetClampedX}>
+        <Container x={-offsetClampedX} click={onClick} eventMode='static'>
             <Sprite image='background.png' />
             <Player
                 position={playerPosition}
@@ -63,8 +78,17 @@ export const GameplayContainer = ({ onGetPoint } : Props) => {
                 treasures={treasures}
                 onTreasureCollected={onTreasureCollected}
             />
-            {treasures.map(t => (
-                <Treasure x={t.x} y={t.y} />
+            {treasures.map((t, i) => (
+                <Treasure key={i} x={t.x} y={t.y} />
+            ))}
+            {arrows.map((a, i) => (
+                <Arrow
+                    key={i}
+                    startPosition={playerPosition}
+                    rotation={a.rotation}
+                    treasures={treasures}
+                    onTreasureCollected={onTreasureCollected}
+                />
             ))}
         </Container>
     );
